@@ -1,6 +1,18 @@
 
-const columns = 10;
-const rows = 10;
+let columns = 10;
+let rows = 10;
+let longerSide;
+if (columns >= rows)
+{
+    longerSide = columns;
+}
+else if (rows > columns)
+{
+    longerSide = rows;
+}
+
+let scale = 10 / longerSide;
+let boxSize = 500 / longerSide;
 
 let gridItemList = [];
 
@@ -35,6 +47,8 @@ function gridItemCreate(boxCount)
     {
         let gridItem = document.createElement("div");
         gridItem.className = "grid-item";
+        gridItem.style.width = `${boxSize}`;
+        gridItem.style.height = `${boxSize}`;
         gameBoard.appendChild(gridItem);
         gridItemList.push(gridItem);
         gridItem.addEventListener("mousedown", click);
@@ -226,4 +240,6 @@ document.addEventListener("mouseup", (e) => {
 document.getElementById("play-area").addEventListener("contextmenu",(e)=>e.preventDefault());
 gridItemCreate(columns * rows);
 createMines(mineCount);
-gameBoard.style.gridTemplateColumns=`repeat(${columns}, auto)`;
+gameBoard.style.gridTemplateColumns=`repeat(${columns}, 1fr)`; 
+gameBoard.style.gridTemplateRows=`repeat(${rows}, 1fr)`;
+gameBoard.style.transform=`scale(${scale})`;
