@@ -1,0 +1,100 @@
+body{
+    background: rgb(34,193,195);
+    background: linear-gradient(35deg, rgba(34,193,195,1) 0%, rgba(253,187,45,1) 100%);
+    height: 100vh;
+    margin: 0;
+}
+h1{
+    text-align: center;
+    font-size: 3em;
+    margin: 0;
+    padding: .5em;
+}
+.grid-item{
+    border: 4px solid rgb(214, 214, 214);
+    box-sizing: border-box;
+    border-style: outset;
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    font-size: 1.5em;
+    font-weight: 900;
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+.grid-item:hover{
+    border-style: inset;
+}
+.grid-container{
+    display: grid;
+    width: 500px;
+    height: 500px;
+    margin: auto;
+}
+.empty-cell, .clicked{
+    background-color: lightgrey;
+    border-style: inset;
+}
+.flag::after{
+    content: "🚩";
+}
+.game-over, .you-won{
+    pointer-events: none;
+}
+.game-over > .mine{
+    background-color: red;
+}
+.game-over > .mine::after{
+    content: "💣";
+}
+.you-won > .mine{
+    background-color: green;
+}
+div[data-mine-count = "1"]{
+    color: blue;
+}
+div[data-mine-count = "2"]{
+    color: green;
+}
+div[data-mine-count = "3"]{
+    color: red;
+}
+div[data-mine-count = "4"]{
+    color: darkblue;
+}
+div[data-mine-count = "5"]{
+    color: maroon;
+}
+div[data-mine-count = "6"]{
+    color: teal;
+}
+div[data-mine-count = "7"]{
+    color: purple;
+}
+div[data-mine-count = "8"]{
+    color: black;
+}
+
+div[data-mine-count = "1"]::after{
+    content: "1";
+}
+div[data-mine-count = "2"]::after{
+    content: "2";
+}
+div[data-mine-count = "3"]::after{
+    content: "3";
+}
+div[data-mine-count = "4"]::after{
+    content: "4";
+}
+div[data-mine-count = "5"]::after{
+    content: "5";
+}
+div[data-mine-count = "6"]::after{
+    content: "6";
+}
+div[data-mine-count = "7"]::after{
+    content: "7";
+}
+div[data-mine-count = "8"]::after{
+    content: "8";
+}
