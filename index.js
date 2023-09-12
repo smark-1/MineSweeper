@@ -11,12 +11,47 @@ else if (rows > columns)
     longerSide = rows;
 }
 
-let scale = 10 / longerSide;
+let fontSize;
+if (longerSide < 10){fontSize = 34;}
+else if (longerSide <= 10){fontSize = 30;}
+else if (longerSide > 10 && longerSide <= 14){fontSize = 20;}
+else if (longerSide > 14 && longerSide <= 18){fontSize = 14;}
+else if (longerSide > 18 && longerSide <= 22){fontSize = 10;}
+else if (longerSide > 22 && longerSide <= 30){fontSize = 6;}
+else if (longerSide > 30){fontSize = 2;}
+/*
+C x R ttl fs
+30x30     06
+29x29     06
+28x28     07
+27x27     07
+26x26     08
+25x25     08
+24x24     09
+23x23     09
+22x22     10
+21x21     11
+20x20     12
+19x19     13
+18x18     14
+17x17     15
+16x16     16
+15x15     18
+14x14     20
+13x13     22
+12x12     24
+11x11     27
+10x10     30
+09x09     34
+*/
+
 let boxSize = 500 / longerSide;
 
 let gridItemList = [];
 
-const mineCount = 10;
+// make different difficulty levels with different amounts of mines
+let mineCount = Math.floor(longerSide * 2);
+let flagCount = 0;
 
 let gameBoard = document.getElementById("board");
 
@@ -47,8 +82,7 @@ function gridItemCreate(boxCount)
     {
         let gridItem = document.createElement("div");
         gridItem.className = "grid-item";
-        gridItem.style.width = `${boxSize}`;
-        gridItem.style.height = `${boxSize}`;
+        gridItem.style.fontSize = `${fontSize}px`;
         gameBoard.appendChild(gridItem);
         gridItemList.push(gridItem);
         gridItem.addEventListener("mousedown", click);
@@ -105,6 +139,7 @@ function leftClick(e)
         if (gridItemList[i].className === "grid-item" || gridItemList[i].className === "grid-item flag") { return; }
     }
     gameBoard.classList.add("you-won");
+    document.getElementById("mineCounter").innerText = "Mines: 0";
 }
 
 function rightClick(e)
@@ -114,6 +149,15 @@ function rightClick(e)
     if (gameBoard.classList.contains("you-won")) { return; }
     if (gameBoard.classList.contains("game-over")) { return; }
     e.target.classList.toggle("flag");
+    if (e.target.classList.contains("flag"))
+    {
+        flagCount++;
+    }
+    else 
+    {
+        flagCount--;
+    }
+    document.getElementById("mineCounter").innerText = `Mines: ${mineCount - flagCount}`;
 }
 
 function bothClick(e)
@@ -240,6 +284,6 @@ document.addEventListener("mouseup", (e) => {
 document.getElementById("play-area").addEventListener("contextmenu",(e)=>e.preventDefault());
 gridItemCreate(columns * rows);
 createMines(mineCount);
-gameBoard.style.gridTemplateColumns=`repeat(${columns}, 1fr)`; 
-gameBoard.style.gridTemplateRows=`repeat(${rows}, 1fr)`;
-gameBoard.style.transform=`scale(${scale})`;
+document.getElementById("mineCounter").innerText = `Mines: ${mineCount}`;
+gameBoard.style.gridTemplateColumns=`repeat(${columns}, ${boxSize}px)`; 
+gameBoard.style.gridTemplateRows=`repeat(${rows}, ${boxSize}px)`;
