@@ -3,6 +3,7 @@ body{
     background: linear-gradient(35deg, rgba(34,193,195,1) 0%, rgba(253,187,45,1) 100%);
     height: 100vh;
     margin: 0;
+    overflow: hidden;
 }
 h1{
     text-align: center;
@@ -101,4 +102,30 @@ div[data-mine-count = "7"]::after{
 }
 div[data-mine-count = "8"]::after{
     content: "8";
+}
+
+.container{
+    display: grid;
+    grid-template-columns: 1fr 3fr 1fr;
+}
+.sidebar{
+    padding:10px;
+}
+
+button{
+    box-sizing: border-box;
+    width:100%;
+    border-radius: 3px;
+    outline: hidden;
+    border-style: hidden;
+    background-color: darkgoldenrod;
+    padding: 10px;
+    font-size: 1.2em;
+}
+
+button:hover{
+    background-color: goldenrod;
+}
+button:active{
+    border-style: inset;
 }

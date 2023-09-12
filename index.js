@@ -255,6 +255,15 @@ function getAdjacentClass(cellLocation, className)
     return numOfAdjacentCells;
 }
 
+function reset(){
+    used = [];
+    gridItemList = [];
+    gameBoard.innerHTML = "";
+    gameBoard.className = "grid-container"
+    gridItemCreate(columns * rows);
+    createMines(mineCount);
+}
+
 document.addEventListener("mousedown", (e) => {
     // left click
     if (e.button === 0) 
@@ -282,6 +291,7 @@ document.addEventListener("mouseup", (e) => {
 });
 
 document.getElementById("play-area").addEventListener("contextmenu",(e)=>e.preventDefault());
+document.getElementById("restartButton").addEventListener("click",reset)
 gridItemCreate(columns * rows);
 createMines(mineCount);
 document.getElementById("mineCounter").innerText = `Mines: ${mineCount}`;
