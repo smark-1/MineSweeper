@@ -1,61 +1,14 @@
-
-let columns = 10;
-let rows = 10;
+let settings={columns:10,rows:10,mines:10}
 let longerSide;
-if (columns >= rows)
-{
-    longerSide = columns;
-}
-else if (rows > columns)
-{
-    longerSide = rows;
-}
-
 let fontSize;
-if (longerSide < 10){fontSize = 34;}
-else if (longerSide <= 10){fontSize = 30;}
-else if (longerSide > 10 && longerSide <= 14){fontSize = 20;}
-else if (longerSide > 14 && longerSide <= 18){fontSize = 14;}
-else if (longerSide > 18 && longerSide <= 22){fontSize = 10;}
-else if (longerSide > 22 && longerSide <= 30){fontSize = 6;}
-else if (longerSide > 30){fontSize = 2;}
-/*
-C x R ttl fs
-30x30     06
-29x29     06
-28x28     07
-27x27     07
-26x26     08
-25x25     08
-24x24     09
-23x23     09
-22x22     10
-21x21     11
-20x20     12
-19x19     13
-18x18     14
-17x17     15
-16x16     16
-15x15     18
-14x14     20
-13x13     22
-12x12     24
-11x11     27
-10x10     30
-09x09     34
-*/
-
-let boxSize = 500 / longerSide;
-
-let gridItemList = [];
-
+let boxSize;
+let gridItemList;
 // make different difficulty levels with different amounts of mines
-let mineCount = Math.floor(longerSide * 2);
-let flagCount = 0;
-
+let mineCount;
+let flagCount;
 let gameBoard = document.getElementById("board");
-
-let used = [];
+const minesRangeSelector = document.getElementById("mines-selector");
+let used;
 
 let leftButtonDown = false;
 let rightButtonDown = false;
@@ -200,39 +153,39 @@ function getBlankCells(cellLocation)
 function getAdjacentCells(cellLocation)
 {
     let checkLocations = [];
-    const columnIndex = cellLocation % columns;
+    const columnIndex = cellLocation % settings.columns;
     
     if (columnIndex !== 0) // left
     {
         checkLocations.push(gridItemList[cellLocation - 1]);
     }
-    if (columnIndex !== columns - 1) // right
+    if (columnIndex !== settings.columns - 1) // right
     {
         checkLocations.push(gridItemList[cellLocation + 1]);
     }
-    if ((cellLocation - columns) >= 0) // up
+    if ((cellLocation - settings.columns) >= 0) // up
     {
-        checkLocations.push(gridItemList[cellLocation - columns]);
+        checkLocations.push(gridItemList[cellLocation - settings.columns]);
     }
-    if ((cellLocation + columns) < gridItemList.length) // down
+    if ((cellLocation + settings.columns) < gridItemList.length) // down
     {
-        checkLocations.push(gridItemList[cellLocation + columns]);
+        checkLocations.push(gridItemList[cellLocation + settings.columns]);
     }
-    if (columnIndex !== 0 && (cellLocation - columns - 1) >= 0) // up left
+    if (columnIndex !== 0 && (cellLocation - settings.columns - 1) >= 0) // up left
     {
-        checkLocations.push(gridItemList[cellLocation - columns - 1]);
+        checkLocations.push(gridItemList[cellLocation - settings.columns - 1]);
     }
-    if (columnIndex !== (columns - 1) && (cellLocation + columns + 1) < gridItemList.length) // down right
+    if (columnIndex !== (settings.columns - 1) && (cellLocation + settings.columns + 1) < gridItemList.length) // down right
     {
-        checkLocations.push(gridItemList[cellLocation + columns + 1]);
+        checkLocations.push(gridItemList[cellLocation + settings.columns + 1]);
     }
-    if (columnIndex !== (columns - 1) && (cellLocation - columns) >= 0) // up right
+    if (columnIndex !== (settings.columns - 1) && (cellLocation - settings.columns) >= 0) // up right
     {
-        checkLocations.push(gridItemList[cellLocation - columns + 1]);
+        checkLocations.push(gridItemList[cellLocation - settings.columns + 1]);
     }
-    if (columnIndex !== 0 && (cellLocation + columns) < gridItemList.length) // down left
+    if (columnIndex !== 0 && (cellLocation + settings.columns) < gridItemList.length) // down left
     {
-        checkLocations.push(gridItemList[cellLocation + columns - 1]);
+        checkLocations.push(gridItemList[cellLocation + settings.columns - 1]);
     }
 
     return checkLocations;
@@ -243,7 +196,6 @@ function getAdjacentClass(cellLocation, className)
     let adjacentCells = getAdjacentCells(cellLocation);
 
     let numOfAdjacentCells = 0;
-
     adjacentCells.forEach(cell => 
         {
             if(cell.classList.contains(className))
@@ -256,12 +208,94 @@ function getAdjacentClass(cellLocation, className)
 }
 
 function reset(){
-    used = [];
+    // sets all values to default settings
+    if (settings.columns >= settings.rows)
+    {
+        longerSide = settings.columns;
+    }
+    else if (settings.rows > settings.columns)
+    {
+        longerSide = settings.rows;
+    }
+
+    if (longerSide < 10){fontSize = 34;}
+    else if (longerSide <= 10){fontSize = 30;}
+    else if (longerSide > 10 && longerSide <= 14){fontSize = 20;}
+    else if (longerSide > 14 && longerSide <= 18){fontSize = 14;}
+    else if (longerSide > 18 && longerSide <= 22){fontSize = 10;}
+    else if (longerSide > 22 && longerSide <= 30){fontSize = 6;}
+    else if (longerSide > 30){fontSize = 2;}
+    /*
+    C x R ttl fs
+    30x30     06
+    29x29     06
+    28x28     07
+    27x27     07
+    26x26     08
+    25x25     08
+    24x24     09
+    23x23     09
+    22x22     10
+    21x21     11
+    20x20     12
+    19x19     13
+    18x18     14
+    17x17     15
+    16x16     16
+    15x15     18
+    14x14     20
+    13x13     22
+    12x12     24
+    11x11     27
+    10x10     30
+    09x09     34
+    */
+
     gridItemList = [];
+
+    // make different difficulty levels with different amounts of mines
+    mineCount = Math.floor(settings.mines);
+    // mineCount = Math.floor(3);
+    flagCount = 0;
+
+
+    used = [];
+
+    boxSize = 500 / longerSide;
     gameBoard.innerHTML = "";
     gameBoard.className = "grid-container"
-    gridItemCreate(columns * rows);
+    gameBoard.style.gridTemplateColumns=`repeat(${settings.columns}, ${boxSize}px)`;
+    gameBoard.style.gridTemplateRows=`repeat(${settings.rows}, ${boxSize}px)`;
+    document.getElementById('rows-selector-value').innerText=settings.rows;
+    document.getElementById('mines-selector-value').innerText=settings.mines;
+    document.getElementById('cols-selector-value').innerText=settings.columns;
+
+    minesRangeSelector.max=Math.floor(settings.columns*settings.rows-longerSide/2);
+    minesRangeSelector.min=Math.floor(Math.max(longerSide/2,4));
+    minesRangeSelector.value=settings.mines;
+
+    gridItemCreate(settings.columns * settings.rows);
     createMines(mineCount);
+    document.getElementById("mineCounter").innerText = `Mines: ${mineCount}`;
+}
+function updateCols(e){
+    settings.columns=parseInt(e.target.value);
+    if (settings.mines>Math.floor(settings.columns*settings.rows-longerSide/2)){
+        settings.mines=Math.floor(settings.columns*settings.rows-longerSide/2);
+    }
+    reset();
+}
+
+function updateRows(e){
+    settings.rows=parseInt(e.target.value);
+    if (settings.mines>Math.floor(settings.columns*settings.rows-longerSide/2)){
+        settings.mines=Math.floor(settings.columns*settings.rows-longerSide/2);
+    }
+    reset();
+}
+function updateMines(e){
+    settings.mines=parseInt(e.target.value);
+    reset();
 }
 
 document.addEventListener("mousedown", (e) => {
@@ -292,8 +326,9 @@ document.addEventListener("mouseup", (e) => {
 
 document.getElementById("play-area").addEventListener("contextmenu",(e)=>e.preventDefault());
 document.getElementById("restartButton").addEventListener("click",reset)
-gridItemCreate(columns * rows);
-createMines(mineCount);
-document.getElementById("mineCounter").innerText = `Mines: ${mineCount}`;
-gameBoard.style.gridTemplateColumns=`repeat(${columns}, ${boxSize}px)`; 
-gameBoard.style.gridTemplateRows=`repeat(${rows}, ${boxSize}px)`;
+document.getElementById("cols-selector").addEventListener("input",updateCols)
+document.getElementById("rows-selector").addEventListener("input",updateRows)
+document.getElementById("mines-selector").addEventListener("input",updateMines)
+
+// game setup
+reset();
