@@ -12,8 +12,16 @@ h1{
     padding: .5em;
 }
 #mineCounter{
-    top:50px;
+    top: 50px;
     left: 20px;
+    position: absolute;
+}
+#option{
+    left: 20px;
+    position: absolute;
+}
+#difficulty{
+    left: 80px;
     position: absolute;
 }
 .grid-item{
@@ -78,7 +86,6 @@ div[data-mine-count = "7"]{
 div[data-mine-count = "8"]{
     color: black;
 }
-
 div[data-mine-count = "1"]::after{
     content: "1";
 }
@@ -103,7 +110,6 @@ div[data-mine-count = "7"]::after{
 div[data-mine-count = "8"]::after{
     content: "8";
 }
-
 .container{
     display: grid;
     grid-template-columns: 1fr 3fr 1fr;
@@ -111,10 +117,9 @@ div[data-mine-count = "8"]::after{
 .sidebar{
     padding:10px;
 }
-
 button{
     box-sizing: border-box;
-    width:100%;
+    width: 100%;
     border-radius: 3px;
     outline: hidden;
     border-style: hidden;
@@ -122,7 +127,6 @@ button{
     padding: 10px;
     font-size: 1.2em;
 }
-
 button:hover{
     background-color: goldenrod;
 }

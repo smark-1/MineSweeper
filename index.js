@@ -1,6 +1,6 @@
 
-let columns = 10;
-let rows = 10;
+let columns = 30;
+let rows = 30;
 let longerSide;
 if (columns >= rows)
 {
