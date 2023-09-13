@@ -278,6 +278,7 @@ function reset(){
     createMines(mineCount);
     document.getElementById("mineCounter").innerText = `Mines: ${mineCount}`;
 }
+
 function updateCols(e){
     settings.columns=parseInt(e.target.value);
     if (settings.mines>Math.floor(settings.columns*settings.rows-longerSide/2)){
@@ -293,6 +294,7 @@ function updateRows(e){
     }
     reset();
 }
+
 function updateMines(e){
     settings.mines=parseInt(e.target.value);
     reset();
