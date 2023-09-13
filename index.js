@@ -1,61 +1,15 @@
-
-let columns = 10;
-let rows = 10;
+let settings={columns:10,rows:10}
+let columns;
+let rows;
 let longerSide;
-if (columns >= rows)
-{
-    longerSide = columns;
-}
-else if (rows > columns)
-{
-    longerSide = rows;
-}
-
 let fontSize;
-if (longerSide < 10){fontSize = 34;}
-else if (longerSide <= 10){fontSize = 30;}
-else if (longerSide > 10 && longerSide <= 14){fontSize = 20;}
-else if (longerSide > 14 && longerSide <= 18){fontSize = 14;}
-else if (longerSide > 18 && longerSide <= 22){fontSize = 10;}
-else if (longerSide > 22 && longerSide <= 30){fontSize = 6;}
-else if (longerSide > 30){fontSize = 2;}
-/*
-C x R ttl fs
-30x30     06
-29x29     06
-28x28     07
-27x27     07
-26x26     08
-25x25     08
-24x24     09
-23x23     09
-22x22     10
-21x21     11
-20x20     12
-19x19     13
-18x18     14
-17x17     15
-16x16     16
-15x15     18
-14x14     20
-13x13     22
-12x12     24
-11x11     27
-10x10     30
-09x09     34
-*/
-
-let boxSize = 500 / longerSide;
-
-let gridItemList = [];
-
+let boxSize;
+let gridItemList;
 // make different difficulty levels with different amounts of mines
-let mineCount = Math.floor(longerSide * 2);
-let flagCount = 0;
-
+let mineCount;
+let flagCount;
 let gameBoard = document.getElementById("board");
-
-let used = [];
+let used;
 
 let leftButtonDown = false;
 let rightButtonDown = false;
@@ -243,7 +197,6 @@ function getAdjacentClass(cellLocation, className)
     let adjacentCells = getAdjacentCells(cellLocation);
 
     let numOfAdjacentCells = 0;
-
     adjacentCells.forEach(cell => 
         {
             if(cell.classList.contains(className))
@@ -256,12 +209,81 @@ function getAdjacentClass(cellLocation, className)
 }
 
 function reset(){
-    used = [];
+    // sets all values to default settings
+    columns = settings.columns;
+    rows = settings.rows;
+
+    if (columns >= rows)
+    {
+        longerSide = columns;
+    }
+    else if (rows > columns)
+    {
+        longerSide = rows;
+    }
+
+    if (longerSide < 10){fontSize = 34;}
+    else if (longerSide <= 10){fontSize = 30;}
+    else if (longerSide > 10 && longerSide <= 14){fontSize = 20;}
+    else if (longerSide > 14 && longerSide <= 18){fontSize = 14;}
+    else if (longerSide > 18 && longerSide <= 22){fontSize = 10;}
+    else if (longerSide > 22 && longerSide <= 30){fontSize = 6;}
+    else if (longerSide > 30){fontSize = 2;}
+    /*
+    C x R ttl fs
+    30x30     06
+    29x29     06
+    28x28     07
+    27x27     07
+    26x26     08
+    25x25     08
+    24x24     09
+    23x23     09
+    22x22     10
+    21x21     11
+    20x20     12
+    19x19     13
+    18x18     14
+    17x17     15
+    16x16     16
+    15x15     18
+    14x14     20
+    13x13     22
+    12x12     24
+    11x11     27
+    10x10     30
+    09x09     34
+    */
+
     gridItemList = [];
+
+    // make different difficulty levels with different amounts of mines
+    mineCount = Math.floor(longerSide * 2);
+    // mineCount = Math.floor(3);
+    flagCount = 0;
+
+
+    used = [];
+
+    boxSize = 500 / longerSide;
     gameBoard.innerHTML = "";
     gameBoard.className = "grid-container"
+    gameBoard.style.gridTemplateColumns=`repeat(${columns}, ${boxSize}px)`;
+    gameBoard.style.gridTemplateRows=`repeat(${rows}, ${boxSize}px)`;
     gridItemCreate(columns * rows);
     createMines(mineCount);
+    document.getElementById("mineCounter").innerText = `Mines: ${mineCount}`;
+}
+function updateCols(e){
+    settings.columns=parseInt(e.target.value);
+    document.getElementById('cols-selector-value').innerText=e.target.value;
+    reset();
+}
+
+function updateRows(e){
+    settings.rows=parseInt(e.target.value);
+    document.getElementById('rows-selector-value').innerText=e.target.value;
+    reset();
 }
 
 document.addEventListener("mousedown", (e) => {
@@ -292,8 +314,8 @@ document.addEventListener("mouseup", (e) => {
 
 document.getElementById("play-area").addEventListener("contextmenu",(e)=>e.preventDefault());
 document.getElementById("restartButton").addEventListener("click",reset)
-gridItemCreate(columns * rows);
-createMines(mineCount);
-document.getElementById("mineCounter").innerText = `Mines: ${mineCount}`;
-gameBoard.style.gridTemplateColumns=`repeat(${columns}, ${boxSize}px)`; 
-gameBoard.style.gridTemplateRows=`repeat(${rows}, ${boxSize}px)`;
+document.getElementById("cols-selector").addEventListener("input",updateCols)
+document.getElementById("rows-selector").addEventListener("input",updateRows)
+
+// game setup
+reset();

@@ -1,3 +1,8 @@
+:root {
+    --setting-color-primary: #231fbe;
+    --setting-color-secondary: goldenrod;
+}
+
 body{
     background: rgb(34,193,195);
     background: linear-gradient(35deg, rgba(34,193,195,1) 0%, rgba(253,187,45,1) 100%);
@@ -111,6 +116,9 @@ div[data-mine-count = "8"]::after{
 .sidebar{
     padding:10px;
 }
+.sidebar > *{
+    margin: 10px 0;
+}
 
 button{
     box-sizing: border-box;
@@ -118,14 +126,46 @@ button{
     border-radius: 3px;
     outline: hidden;
     border-style: hidden;
-    background-color: darkgoldenrod;
+    background-color: var(--setting-color-secondary);
     padding: 10px;
     font-size: 1.2em;
+    opacity: 0.7;
+    transition: background-color .2s;
 }
 
 button:hover{
-    background-color: goldenrod;
+    opacity: 1;
+    background-color: var(--setting-color-primary);
 }
-button:active{
-    border-style: inset;
+
+
+.slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 25px;
+  background: var(--setting-color-secondary);
+  outline: none;
+  opacity: 0.7;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+}
+
+.slider:hover {
+  opacity: 1;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 25px;
+  height: 25px;
+  background: var(--setting-color-primary);
+  cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+  width: 25px;
+  height: 25px;
+  background: var(--setting-color-primary);
+  cursor: pointer;
 }
