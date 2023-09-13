@@ -9,6 +9,7 @@ let gridItemList;
 let mineCount;
 let flagCount;
 let gameBoard = document.getElementById("board");
+const minesRangeSelector = document.getElementById("mines-selector");
 let used;
 
 let leftButtonDown = false;
@@ -270,24 +271,35 @@ function reset(){
     gameBoard.className = "grid-container"
     gameBoard.style.gridTemplateColumns=`repeat(${columns}, ${boxSize}px)`;
     gameBoard.style.gridTemplateRows=`repeat(${rows}, ${boxSize}px)`;
+    document.getElementById('rows-selector-value').innerText=settings.rows;
+    document.getElementById('mines-selector-value').innerText=settings.mines;
+    document.getElementById('cols-selector-value').innerText=settings.columns;
+
+    minesRangeSelector.max=Math.floor(columns*rows-longerSide/2);
+    minesRangeSelector.min=Math.floor(Math.max(longerSide/2,4));
+    minesRangeSelector.value=settings.mines;
+
     gridItemCreate(columns * rows);
     createMines(mineCount);
     document.getElementById("mineCounter").innerText = `Mines: ${mineCount}`;
 }
 function updateCols(e){
     settings.columns=parseInt(e.target.value);
-    document.getElementById('cols-selector-value').innerText=e.target.value;
+    if (settings.mines>Math.floor(settings.columns*settings.rows-longerSide/2)){
+        settings.mines=Math.floor(settings.columns*settings.rows-longerSide/2);
+    }
     reset();
 }
 
 function updateRows(e){
     settings.rows=parseInt(e.target.value);
-    document.getElementById('rows-selector-value').innerText=e.target.value;
+    if (settings.mines>Math.floor(settings.columns*settings.rows-longerSide/2)){
+        settings.mines=Math.floor(settings.columns*settings.rows-longerSide/2);
+    }
     reset();
 }
 function updateMines(e){
     settings.mines=parseInt(e.target.value);
-    document.getElementById('mines-selector-value').innerText=e.target.value;
     reset();
 }
 
