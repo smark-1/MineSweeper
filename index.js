@@ -1,6 +1,4 @@
 let settings={columns:10,rows:10,mines:10}
-let columns;
-let rows;
 let longerSide;
 let fontSize;
 let boxSize;
@@ -155,39 +153,39 @@ function getBlankCells(cellLocation)
 function getAdjacentCells(cellLocation)
 {
     let checkLocations = [];
-    const columnIndex = cellLocation % columns;
+    const columnIndex = cellLocation % settings.columns;
     
     if (columnIndex !== 0) // left
     {
         checkLocations.push(gridItemList[cellLocation - 1]);
     }
-    if (columnIndex !== columns - 1) // right
+    if (columnIndex !== settings.columns - 1) // right
     {
         checkLocations.push(gridItemList[cellLocation + 1]);
     }
-    if ((cellLocation - columns) >= 0) // up
+    if ((cellLocation - settings.columns) >= 0) // up
     {
-        checkLocations.push(gridItemList[cellLocation - columns]);
+        checkLocations.push(gridItemList[cellLocation - settings.columns]);
     }
-    if ((cellLocation + columns) < gridItemList.length) // down
+    if ((cellLocation + settings.columns) < gridItemList.length) // down
     {
-        checkLocations.push(gridItemList[cellLocation + columns]);
+        checkLocations.push(gridItemList[cellLocation + settings.columns]);
     }
-    if (columnIndex !== 0 && (cellLocation - columns - 1) >= 0) // up left
+    if (columnIndex !== 0 && (cellLocation - settings.columns - 1) >= 0) // up left
     {
-        checkLocations.push(gridItemList[cellLocation - columns - 1]);
+        checkLocations.push(gridItemList[cellLocation - settings.columns - 1]);
     }
-    if (columnIndex !== (columns - 1) && (cellLocation + columns + 1) < gridItemList.length) // down right
+    if (columnIndex !== (settings.columns - 1) && (cellLocation + settings.columns + 1) < gridItemList.length) // down right
     {
-        checkLocations.push(gridItemList[cellLocation + columns + 1]);
+        checkLocations.push(gridItemList[cellLocation + settings.columns + 1]);
     }
-    if (columnIndex !== (columns - 1) && (cellLocation - columns) >= 0) // up right
+    if (columnIndex !== (settings.columns - 1) && (cellLocation - settings.columns) >= 0) // up right
     {
-        checkLocations.push(gridItemList[cellLocation - columns + 1]);
+        checkLocations.push(gridItemList[cellLocation - settings.columns + 1]);
     }
-    if (columnIndex !== 0 && (cellLocation + columns) < gridItemList.length) // down left
+    if (columnIndex !== 0 && (cellLocation + settings.columns) < gridItemList.length) // down left
     {
-        checkLocations.push(gridItemList[cellLocation + columns - 1]);
+        checkLocations.push(gridItemList[cellLocation + settings.columns - 1]);
     }
 
     return checkLocations;
@@ -211,16 +209,13 @@ function getAdjacentClass(cellLocation, className)
 
 function reset(){
     // sets all values to default settings
-    columns = settings.columns;
-    rows = settings.rows;
-
-    if (columns >= rows)
+    if (settings.columns >= settings.rows)
     {
-        longerSide = columns;
+        longerSide = settings.columns;
     }
-    else if (rows > columns)
+    else if (settings.rows > settings.columns)
     {
-        longerSide = rows;
+        longerSide = settings.rows;
     }
 
     if (longerSide < 10){fontSize = 34;}
@@ -269,17 +264,17 @@ function reset(){
     boxSize = 500 / longerSide;
     gameBoard.innerHTML = "";
     gameBoard.className = "grid-container"
-    gameBoard.style.gridTemplateColumns=`repeat(${columns}, ${boxSize}px)`;
-    gameBoard.style.gridTemplateRows=`repeat(${rows}, ${boxSize}px)`;
+    gameBoard.style.gridTemplateColumns=`repeat(${settings.columns}, ${boxSize}px)`;
+    gameBoard.style.gridTemplateRows=`repeat(${settings.rows}, ${boxSize}px)`;
     document.getElementById('rows-selector-value').innerText=settings.rows;
     document.getElementById('mines-selector-value').innerText=settings.mines;
     document.getElementById('cols-selector-value').innerText=settings.columns;
 
-    minesRangeSelector.max=Math.floor(columns*rows-longerSide/2);
+    minesRangeSelector.max=Math.floor(settings.columns*settings.rows-longerSide/2);
     minesRangeSelector.min=Math.floor(Math.max(longerSide/2,4));
     minesRangeSelector.value=settings.mines;
 
-    gridItemCreate(columns * rows);
+    gridItemCreate(settings.columns * settings.rows);
     createMines(mineCount);
     document.getElementById("mineCounter").innerText = `Mines: ${mineCount}`;
 }
