@@ -1,4 +1,4 @@
-let settings={columns:10,rows:10}
+let settings={columns:10,rows:10,mines:10}
 let columns;
 let rows;
 let longerSide;
@@ -258,7 +258,7 @@ function reset(){
     gridItemList = [];
 
     // make different difficulty levels with different amounts of mines
-    mineCount = Math.floor(longerSide * 2);
+    mineCount = Math.floor(settings.mines);
     // mineCount = Math.floor(3);
     flagCount = 0;
 
@@ -283,6 +283,11 @@ function updateCols(e){
 function updateRows(e){
     settings.rows=parseInt(e.target.value);
     document.getElementById('rows-selector-value').innerText=e.target.value;
+    reset();
+}
+function updateMines(e){
+    settings.mines=parseInt(e.target.value);
+    document.getElementById('mines-selector-value').innerText=e.target.value;
     reset();
 }
 
@@ -316,6 +321,7 @@ document.getElementById("play-area").addEventListener("contextmenu",(e)=>e.preve
 document.getElementById("restartButton").addEventListener("click",reset)
 document.getElementById("cols-selector").addEventListener("input",updateCols)
 document.getElementById("rows-selector").addEventListener("input",updateRows)
+document.getElementById("mines-selector").addEventListener("input",updateMines)
 
 // game setup
 reset();
