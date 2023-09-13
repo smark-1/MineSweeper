@@ -1,4 +1,4 @@
-let settings={columns:10,rows:10,mines:10}
+let settings = { columns: 10, rows: 10, mines: 10 };
 let longerSide;
 let fontSize;
 let boxSize;
@@ -13,219 +13,228 @@ let used;
 let leftButtonDown = false;
 let rightButtonDown = false;
 
-function createMines(mineCount)
-{
-    for(let i = 0; i < mineCount; i++)
-    {
-        let box = (Math.floor(Math.random() * gridItemList.length));
-        if(!gridItemList[box].classList.contains("mine"))
-        {
-            gridItemList[box].classList.add("mine");
-        }
-        else
-        {
-            i--;
-        }
+function createMines(mineCount) {
+  for (let i = 0; i < mineCount; i++) {
+    let box = Math.floor(Math.random() * gridItemList.length);
+    if (!gridItemList[box].classList.contains("mine")) {
+      gridItemList[box].classList.add("mine");
+    } else {
+      i--;
     }
+  }
 }
 
-function gridItemCreate(boxCount)
-{
-    for (let i = 0; i < boxCount; i++)
-    {
-        let gridItem = document.createElement("div");
-        gridItem.className = "grid-item";
-        gridItem.style.fontSize = `${fontSize}px`;
-        gameBoard.appendChild(gridItem);
-        gridItemList.push(gridItem);
-        gridItem.addEventListener("mousedown", click);
-        gridItem.dataset.cellLocation = i;
-    }
+function gridItemCreate(boxCount) {
+  for (let i = 0; i < boxCount; i++) {
+    let gridItem = document.createElement("div");
+    gridItem.className = "grid-item";
+    gridItem.style.fontSize = `${fontSize}px`;
+    gameBoard.appendChild(gridItem);
+    gridItemList.push(gridItem);
+    gridItem.addEventListener("mousedown", click);
+    gridItem.dataset.cellLocation = i;
+  }
 }
 
-function click(e)
-{   
-    setTimeout(()=>{
-        if (leftButtonDown && rightButtonDown)
-        {
-            bothClick(e);
-        }    
-        else if (leftButtonDown)
-        {
-            leftClick(e);
-        }
-        else if (rightButtonDown)
-        {
-            rightClick(e);
-        }
-    },20);
+function click(e) {
+  setTimeout(() => {
+    if (leftButtonDown && rightButtonDown) {
+      bothClick(e);
+    } else if (leftButtonDown) {
+      leftClick(e);
+    } else if (rightButtonDown) {
+      rightClick(e);
+    }
+  }, 20);
 }
 
-function leftClick(e)
-{
-    if (e.target.classList.contains("flag")) { return; }
-    if (gameBoard.classList.contains("you-won")) { return; }
-    if (gameBoard.classList.contains("game-over")) { return; }
-    let cellLocation = parseInt(e.target.dataset.cellLocation);
+function leftClick(e) {
+  if (e.target.classList.contains("flag")) {
+    return;
+  }
+  if (gameBoard.classList.contains("you-won")) {
+    return;
+  }
+  if (gameBoard.classList.contains("game-over")) {
+    return;
+  }
+  let cellLocation = parseInt(e.target.dataset.cellLocation);
 
-    let numOfMines = getAdjacentClass(cellLocation, "mine");
+  let numOfMines = getAdjacentClass(cellLocation, "mine");
 
-    if(e.target.classList.contains("mine"))
-    {
-        gameBoard.classList.add("game-over");
+  if (e.target.classList.contains("mine")) {
+    gameBoard.classList.add("game-over");
+  } else {
+    if (numOfMines !== 0) {
+      e.target.classList.add("clicked");
+      e.target.classList.remove("flag");
+      e.target.dataset.mineCount = numOfMines;
+    } else {
+      getBlankCells(cellLocation);
     }
-    else
-    {
-        if(numOfMines !== 0)
-        {
-            e.target.classList.add("clicked");
-            e.target.classList.remove("flag");
-            e.target.dataset.mineCount = numOfMines;
-        }
-        else
-        {
-            getBlankCells(cellLocation);
-        }
+  }
+  for (let i = 0; i < gridItemList.length; i++) {
+    if (
+      gridItemList[i].className === "grid-item" ||
+      gridItemList[i].className === "grid-item flag"
+    ) {
+      return;
     }
-    for (let i = 0; i < gridItemList.length; i++)
-    {
-        if (gridItemList[i].className === "grid-item" || gridItemList[i].className === "grid-item flag") { return; }
-    }
-    gameBoard.classList.add("you-won");
-    document.getElementById("mineCounter").innerText = "Mines: 0";
+  }
+  gameBoard.classList.add("you-won");
+  document.getElementById("mineCounter").innerText = "Mines: 0";
 }
 
-function rightClick(e)
-{
-    if (e.target.classList.contains("clicked")) { return; }
-    if (e.target.classList.contains("empty-cell")) { return; }
-    if (gameBoard.classList.contains("you-won")) { return; }
-    if (gameBoard.classList.contains("game-over")) { return; }
-    e.target.classList.toggle("flag");
-    if (e.target.classList.contains("flag"))
-    {
-        flagCount++;
-    }
-    else 
-    {
-        flagCount--;
-    }
-    document.getElementById("mineCounter").innerText = `Mines: ${mineCount - flagCount}`;
+function rightClick(e) {
+  if (e.target.classList.contains("clicked")) {
+    return;
+  }
+  if (e.target.classList.contains("empty-cell")) {
+    return;
+  }
+  if (gameBoard.classList.contains("you-won")) {
+    return;
+  }
+  if (gameBoard.classList.contains("game-over")) {
+    return;
+  }
+  e.target.classList.toggle("flag");
+  if (e.target.classList.contains("flag")) {
+    flagCount++;
+  } else {
+    flagCount--;
+  }
+  document.getElementById("mineCounter").innerText = `Mines: ${
+    mineCount - flagCount
+  }`;
 }
 
-function bothClick(e)
-{
-    let cellLocation = parseInt(e.target.dataset.cellLocation);
-    let numOfAdjacentFlags = getAdjacentClass(cellLocation, "flag");
-    let numOfMines = getAdjacentClass(cellLocation, "mine");
+function bothClick(e) {
+  let cellLocation = parseInt(e.target.dataset.cellLocation);
+  let numOfAdjacentFlags = getAdjacentClass(cellLocation, "flag");
+  let numOfMines = getAdjacentClass(cellLocation, "mine");
 
-    if (e.target.classList.contains("clicked") && numOfAdjacentFlags === numOfMines)
-    {
-        let adjacentCells = getAdjacentCells(cellLocation);
-        console.log(adjacentCells);
-        adjacentCells.forEach(cell => leftClick({target:cell}));
-    }
-}
-
-function getBlankCells(cellLocation)
-{
-    if (used.includes(cellLocation)){ return; }
-
-    used.push(cellLocation);
-
-    let numOfMines = getAdjacentClass(cellLocation, "mine");
-    
-    if (numOfMines !== 0)
-    {
-        gridItemList[cellLocation].dataset.mineCount = numOfMines;
-        gridItemList[cellLocation].classList.add("clicked");
-        gridItemList[cellLocation].classList.remove("flag");
-        return;
-    }
-
-    gridItemList[cellLocation].classList.add("empty-cell");
-
+  if (
+    e.target.classList.contains("clicked") &&
+    numOfAdjacentFlags === numOfMines
+  ) {
     let adjacentCells = getAdjacentCells(cellLocation);
-
-    adjacentCells.forEach(cell => {getBlankCells(parseInt(cell.dataset.cellLocation))});
+    console.log(adjacentCells);
+    adjacentCells.forEach((cell) => leftClick({ target: cell }));
+  }
 }
 
-function getAdjacentCells(cellLocation)
-{
-    let checkLocations = [];
-    const columnIndex = cellLocation % settings.columns;
-    
-    if (columnIndex !== 0) // left
-    {
-        checkLocations.push(gridItemList[cellLocation - 1]);
-    }
-    if (columnIndex !== settings.columns - 1) // right
-    {
-        checkLocations.push(gridItemList[cellLocation + 1]);
-    }
-    if ((cellLocation - settings.columns) >= 0) // up
-    {
-        checkLocations.push(gridItemList[cellLocation - settings.columns]);
-    }
-    if ((cellLocation + settings.columns) < gridItemList.length) // down
-    {
-        checkLocations.push(gridItemList[cellLocation + settings.columns]);
-    }
-    if (columnIndex !== 0 && (cellLocation - settings.columns - 1) >= 0) // up left
-    {
-        checkLocations.push(gridItemList[cellLocation - settings.columns - 1]);
-    }
-    if (columnIndex !== (settings.columns - 1) && (cellLocation + settings.columns + 1) < gridItemList.length) // down right
-    {
-        checkLocations.push(gridItemList[cellLocation + settings.columns + 1]);
-    }
-    if (columnIndex !== (settings.columns - 1) && (cellLocation - settings.columns) >= 0) // up right
-    {
-        checkLocations.push(gridItemList[cellLocation - settings.columns + 1]);
-    }
-    if (columnIndex !== 0 && (cellLocation + settings.columns) < gridItemList.length) // down left
-    {
-        checkLocations.push(gridItemList[cellLocation + settings.columns - 1]);
-    }
+function getBlankCells(cellLocation) {
+  if (used.includes(cellLocation)) {
+    return;
+  }
 
-    return checkLocations;
+  used.push(cellLocation);
+
+  let numOfMines = getAdjacentClass(cellLocation, "mine");
+
+  if (numOfMines !== 0) {
+    gridItemList[cellLocation].dataset.mineCount = numOfMines;
+    gridItemList[cellLocation].classList.add("clicked");
+    gridItemList[cellLocation].classList.remove("flag");
+    return;
+  }
+
+  gridItemList[cellLocation].classList.add("empty-cell");
+
+  let adjacentCells = getAdjacentCells(cellLocation);
+
+  adjacentCells.forEach((cell) => {
+    getBlankCells(parseInt(cell.dataset.cellLocation));
+  });
 }
 
-function getAdjacentClass(cellLocation, className)
-{
-    let adjacentCells = getAdjacentCells(cellLocation);
+function getAdjacentCells(cellLocation) {
+  let checkLocations = [];
+  const columnIndex = cellLocation % settings.columns;
 
-    let numOfAdjacentCells = 0;
-    adjacentCells.forEach(cell => 
-        {
-            if(cell.classList.contains(className))
-            {
-                numOfAdjacentCells++;
-            }
-        });
+  if (columnIndex !== 0) {
+    // left
+    checkLocations.push(gridItemList[cellLocation - 1]);
+  }
+  if (columnIndex !== settings.columns - 1) {
+    // right
+    checkLocations.push(gridItemList[cellLocation + 1]);
+  }
+  if (cellLocation - settings.columns >= 0) {
+    // up
+    checkLocations.push(gridItemList[cellLocation - settings.columns]);
+  }
+  if (cellLocation + settings.columns < gridItemList.length) {
+    // down
+    checkLocations.push(gridItemList[cellLocation + settings.columns]);
+  }
+  if (columnIndex !== 0 && cellLocation - settings.columns - 1 >= 0) {
+    // up left
+    checkLocations.push(gridItemList[cellLocation - settings.columns - 1]);
+  }
+  if (
+    columnIndex !== settings.columns - 1 &&
+    cellLocation + settings.columns + 1 < gridItemList.length
+  ) {
+    // down right
+    checkLocations.push(gridItemList[cellLocation + settings.columns + 1]);
+  }
+  if (
+    columnIndex !== settings.columns - 1 &&
+    cellLocation - settings.columns >= 0
+  ) {
+    // up right
+    checkLocations.push(gridItemList[cellLocation - settings.columns + 1]);
+  }
+  if (
+    columnIndex !== 0 &&
+    cellLocation + settings.columns < gridItemList.length
+  ) {
+    // down left
+    checkLocations.push(gridItemList[cellLocation + settings.columns - 1]);
+  }
 
-    return numOfAdjacentCells;
+  return checkLocations;
 }
 
-function reset(){
-    // sets all values to default settings
-    if (settings.columns >= settings.rows)
-    {
-        longerSide = settings.columns;
-    }
-    else if (settings.rows > settings.columns)
-    {
-        longerSide = settings.rows;
-    }
+function getAdjacentClass(cellLocation, className) {
+  let adjacentCells = getAdjacentCells(cellLocation);
 
-    if (longerSide < 10){fontSize = 34;}
-    else if (longerSide <= 10){fontSize = 30;}
-    else if (longerSide > 10 && longerSide <= 14){fontSize = 20;}
-    else if (longerSide > 14 && longerSide <= 18){fontSize = 14;}
-    else if (longerSide > 18 && longerSide <= 22){fontSize = 10;}
-    else if (longerSide > 22 && longerSide <= 30){fontSize = 6;}
-    else if (longerSide > 30){fontSize = 2;}
-    /*
+  let numOfAdjacentCells = 0;
+  adjacentCells.forEach((cell) => {
+    if (cell.classList.contains(className)) {
+      numOfAdjacentCells++;
+    }
+  });
+
+  return numOfAdjacentCells;
+}
+
+function reset() {
+  // sets all values to default settings
+  if (settings.columns >= settings.rows) {
+    longerSide = settings.columns;
+  } else if (settings.rows > settings.columns) {
+    longerSide = settings.rows;
+  }
+
+  if (longerSide < 10) {
+    fontSize = 34;
+  } else if (longerSide <= 10) {
+    fontSize = 30;
+  } else if (longerSide > 10 && longerSide <= 14) {
+    fontSize = 20;
+  } else if (longerSide > 14 && longerSide <= 18) {
+    fontSize = 14;
+  } else if (longerSide > 18 && longerSide <= 22) {
+    fontSize = 10;
+  } else if (longerSide > 22 && longerSide <= 30) {
+    fontSize = 6;
+  } else if (longerSide > 30) {
+    fontSize = 2;
+  }
+  /*
     C x R ttl fs
     30x30     06
     29x29     06
@@ -251,86 +260,97 @@ function reset(){
     09x09     34
     */
 
-    gridItemList = [];
+  gridItemList = [];
 
-    // make different difficulty levels with different amounts of mines
-    mineCount = Math.floor(settings.mines);
-    // mineCount = Math.floor(3);
-    flagCount = 0;
+  // make different difficulty levels with different amounts of mines
+  mineCount = Math.floor(settings.mines);
+  // mineCount = Math.floor(3);
+  flagCount = 0;
 
+  used = [];
 
-    used = [];
+  boxSize = 500 / longerSide;
+  gameBoard.innerHTML = "";
+  gameBoard.className = "grid-container";
+  gameBoard.style.gridTemplateColumns = `repeat(${settings.columns}, ${boxSize}px)`;
+  gameBoard.style.gridTemplateRows = `repeat(${settings.rows}, ${boxSize}px)`;
+  document.getElementById("rows-selector-value").innerText = settings.rows;
+  document.getElementById("mines-selector-value").innerText = settings.mines;
+  document.getElementById("cols-selector-value").innerText = settings.columns;
 
-    boxSize = 500 / longerSide;
-    gameBoard.innerHTML = "";
-    gameBoard.className = "grid-container"
-    gameBoard.style.gridTemplateColumns=`repeat(${settings.columns}, ${boxSize}px)`;
-    gameBoard.style.gridTemplateRows=`repeat(${settings.rows}, ${boxSize}px)`;
-    document.getElementById('rows-selector-value').innerText=settings.rows;
-    document.getElementById('mines-selector-value').innerText=settings.mines;
-    document.getElementById('cols-selector-value').innerText=settings.columns;
+  minesRangeSelector.max = Math.floor(
+    settings.columns * settings.rows - longerSide / 2
+  );
+  minesRangeSelector.min = Math.floor(Math.max(longerSide / 2, 4));
+  minesRangeSelector.value = settings.mines;
 
-    minesRangeSelector.max=Math.floor(settings.columns*settings.rows-longerSide/2);
-    minesRangeSelector.min=Math.floor(Math.max(longerSide/2,4));
-    minesRangeSelector.value=settings.mines;
-
-    gridItemCreate(settings.columns * settings.rows);
-    createMines(mineCount);
-    document.getElementById("mineCounter").innerText = `Mines: ${mineCount}`;
+  gridItemCreate(settings.columns * settings.rows);
+  createMines(mineCount);
+  document.getElementById("mineCounter").innerText = `Mines: ${mineCount}`;
 }
 
-function updateCols(e){
-    settings.columns=parseInt(e.target.value);
-    if (settings.mines>Math.floor(settings.columns*settings.rows-longerSide/2)){
-        settings.mines=Math.floor(settings.columns*settings.rows-longerSide/2);
-    }
-    reset();
+function updateCols(e) {
+  settings.columns = parseInt(e.target.value);
+  if (
+    settings.mines >
+    Math.floor(settings.columns * settings.rows - longerSide / 2)
+  ) {
+    settings.mines = Math.floor(
+      settings.columns * settings.rows - longerSide / 2
+    );
+  }
+  reset();
 }
 
-function updateRows(e){
-    settings.rows=parseInt(e.target.value);
-    if (settings.mines>Math.floor(settings.columns*settings.rows-longerSide/2)){
-        settings.mines=Math.floor(settings.columns*settings.rows-longerSide/2);
-    }
-    reset();
+function updateRows(e) {
+  settings.rows = parseInt(e.target.value);
+  if (
+    settings.mines >
+    Math.floor(settings.columns * settings.rows - longerSide / 2)
+  ) {
+    settings.mines = Math.floor(
+      settings.columns * settings.rows - longerSide / 2
+    );
+  }
+  reset();
 }
 
-function updateMines(e){
-    settings.mines=parseInt(e.target.value);
-    reset();
+function updateMines(e) {
+  settings.mines = parseInt(e.target.value);
+  reset();
 }
 
 document.addEventListener("mousedown", (e) => {
-    // left click
-    if (e.button === 0) 
-    {
-        leftButtonDown = true;
-    }
-    // right button
-    if (e.button === 2) 
-    {
-        rightButtonDown = true;
-    }
+  // left click
+  if (e.button === 0) {
+    leftButtonDown = true;
+  }
+  // right button
+  if (e.button === 2) {
+    rightButtonDown = true;
+  }
 });
 
 document.addEventListener("mouseup", (e) => {
-    // left click
-    if (e.button === 0) 
-    {
-        leftButtonDown = false;
-    }
-    // right button
-    if (e.button === 2) 
-    {
-        rightButtonDown = false;
-    }
+  // left click
+  if (e.button === 0) {
+    leftButtonDown = false;
+  }
+  // right button
+  if (e.button === 2) {
+    rightButtonDown = false;
+  }
 });
 
-document.getElementById("play-area").addEventListener("contextmenu",(e)=>e.preventDefault());
-document.getElementById("restartButton").addEventListener("click",reset)
-document.getElementById("cols-selector").addEventListener("input",updateCols)
-document.getElementById("rows-selector").addEventListener("input",updateRows)
-document.getElementById("mines-selector").addEventListener("input",updateMines)
+document
+  .getElementById("play-area")
+  .addEventListener("contextmenu", (e) => e.preventDefault());
+document.getElementById("restartButton").addEventListener("click", reset);
+document.getElementById("cols-selector").addEventListener("input", updateCols);
+document.getElementById("rows-selector").addEventListener("input", updateRows);
+document
+  .getElementById("mines-selector")
+  .addEventListener("input", updateMines);
 
 // game setup
 reset();
