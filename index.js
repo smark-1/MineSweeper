@@ -10,18 +10,17 @@ let flagCount;
 let gameBoard = document.getElementById("board");
 const minesRangeSelector = document.getElementById("mines-selector");
 let used;
+let turnCount;
+let availableForMine;
 
 let leftButtonDown = false;
 let rightButtonDown = false;
 
 function createMines(mineCount) {
   for (let i = 0; i < mineCount; i++) {
-    let box = Math.floor(Math.random() * gridItemList.length);
-    if (!gridItemList[box].classList.contains("mine")) {
-      gridItemList[box].classList.add("mine");
-    } else {
-      i--;
-    }
+    let cell = Math.floor(Math.random() * availableForMine.length);
+    gridItemList[availableForMine[cell]].classList.add("mine");
+    availableForMine = availableForMine.filter((mine)=>{return parseInt(gridItemList[availableForMine[cell]].dataset.cellLocation) !== mine});
   }
 }
 
@@ -59,7 +58,19 @@ function leftClick(e) {
   if (gameBoard.classList.contains("game-over")) {
     return;
   }
+  turnCount++; // adds turnCount
   let cellLocation = parseInt(e.target.dataset.cellLocation);
+
+  // only creates mines after left click has occurred so location is known to avoid mines
+  if (turnCount === 1) {
+    let notAvailableForMine = [cellLocation , ...getAdjacentCells(cellLocation).map((cell)=>{return parseInt(cell.dataset.cellLocation)})];
+    console.log(notAvailableForMine);
+    availableForMine = [...Array(gridItemList.length).keys()].filter((num)=>{
+      return !notAvailableForMine.includes(num);
+    });
+    console.log(availableForMine);
+    createMines(mineCount);
+  }
 
   let numOfMines = getAdjacentClass(cellLocation, "mine");
 
@@ -119,6 +130,7 @@ function bothClick(e) {
     e.target.classList.contains("clicked") &&
     numOfAdjacentFlags === numOfMines
   ) {
+    turnCount++;
     let adjacentCells = getAdjacentCells(cellLocation);
     console.log(adjacentCells);
     adjacentCells.forEach((cell) => leftClick({ target: cell }));
@@ -134,10 +146,10 @@ function getBlankCells(cellLocation) {
 
   let numOfMines = getAdjacentClass(cellLocation, "mine");
 
+  gridItemList[cellLocation].classList.remove("flag");
   if (numOfMines !== 0) {
     gridItemList[cellLocation].dataset.mineCount = numOfMines;
     gridItemList[cellLocation].classList.add("clicked");
-    gridItemList[cellLocation].classList.remove("flag");
     return;
   }
 
@@ -214,54 +226,82 @@ function getAdjacentClass(cellLocation, className) {
 
 function reset() {
   // sets all values to default settings
+  turnCount = 0;
+
   if (settings.columns >= settings.rows) {
     longerSide = settings.columns;
   } else if (settings.rows > settings.columns) {
     longerSide = settings.rows;
   }
 
-  if (longerSide < 10) {
-    fontSize = 34;
-  } else if (longerSide <= 10) {
-    fontSize = 30;
-  } else if (longerSide > 10 && longerSide <= 14) {
-    fontSize = 20;
-  } else if (longerSide > 14 && longerSide <= 18) {
-    fontSize = 14;
-  } else if (longerSide > 18 && longerSide <= 22) {
-    fontSize = 10;
-  } else if (longerSide > 22 && longerSide <= 30) {
-    fontSize = 6;
-  } else if (longerSide > 30) {
-    fontSize = 2;
+  switch (longerSide) {
+    case 10:
+      fontSize = 47;
+      break;
+    case 11:
+      fontSize = 41;
+      break;
+    case 12:
+      fontSize = 36;
+      break;
+    case 13:
+      fontSize = 32;
+      break;
+    case 14:
+      fontSize = 30;
+      break;
+    case 15:
+      fontSize = 28;
+      break;
+    case 16:
+      fontSize = 26;
+      break;
+    case 17:
+      fontSize = 24;
+      break;
+    case 18:
+      fontSize = 22;
+      break;
+    case 19:
+      fontSize = 20;
+      break;
+    case 20:
+      fontSize = 19;
+      break;
+    case 21:
+      fontSize = 18;
+      break;
+    case 22:
+      fontSize = 17;
+      break;
+    case 23:
+      fontSize = 16;
+      break;
+    case 24:
+      fontSize = 15;
+      break;
+    case 25:
+      fontSize = 14;
+      break;
+    case 26:
+      fontSize = 13;
+      break;
+    case 27:
+      fontSize = 12;
+      break;
+    case 28:
+      fontSize = 12;
+      break;
+    case 29:
+      fontSize = 12;
+      break;
+    case 30:
+      fontSize = 11;
+      break;
   }
-  /*
-    C x R ttl fs
-    30x30     06
-    29x29     06
-    28x28     07
-    27x27     07
-    26x26     08
-    25x25     08
-    24x24     09
-    23x23     09
-    22x22     10
-    21x21     11
-    20x20     12
-    19x19     13
-    18x18     14
-    17x17     15
-    16x16     16
-    15x15     18
-    14x14     20
-    13x13     22
-    12x12     24
-    11x11     27
-    10x10     30
-    09x09     34
-    */
 
   gridItemList = [];
+  availableForMine = [];
 
   // make different difficulty levels with different amounts of mines
   mineCount = Math.floor(settings.mines);
@@ -270,7 +310,7 @@ function reset() {
 
   used = [];
 
-  boxSize = 500 / longerSide;
+  boxSize = 700 / longerSide;
   gameBoard.innerHTML = "";
   gameBoard.className = "grid-container";
   gameBoard.style.gridTemplateColumns = `repeat(${settings.columns}, ${boxSize}px)`;
@@ -282,13 +322,12 @@ function reset() {
   document.getElementById("rows-selector").value=settings.rows;
 
   minesRangeSelector.max = Math.floor(
-    settings.columns * settings.rows - longerSide / 2
+    settings.columns * settings.rows * .9
   );
-  minesRangeSelector.min = Math.floor(Math.max(longerSide / 2, 4));
+  minesRangeSelector.min = Math.floor(longerSide / 2);
   minesRangeSelector.value = settings.mines;
 
   gridItemCreate(settings.columns * settings.rows);
-  createMines(mineCount);
   document.getElementById("mineCounter").innerText = `Mines: ${mineCount}`;
 }
 
@@ -296,10 +335,10 @@ function updateCols(e) {
   settings.columns = parseInt(e.target.value);
   if (
     settings.mines >
-    Math.floor(settings.columns * settings.rows - longerSide / 2)
+    Math.floor(settings.columns * settings.rows * .9)
   ) {
     settings.mines = Math.floor(
-      settings.columns * settings.rows - longerSide / 2
+      settings.columns * settings.rows * .9
     );
   }
   reset();
@@ -309,10 +348,10 @@ function updateRows(e) {
   settings.rows = parseInt(e.target.value);
   if (
     settings.mines >
-    Math.floor(settings.columns * settings.rows - longerSide / 2)
+    Math.floor(settings.columns * settings.rows * .9)
   ) {
     settings.mines = Math.floor(
-      settings.columns * settings.rows - longerSide / 2
+      settings.columns * settings.rows * .9
     );
   }
   reset();
