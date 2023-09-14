@@ -1,4 +1,5 @@
-let settings = { columns: 10, rows: 10, mines: 10 };
+// get the settings from local storage, if unset provide default values
+let settings = JSON.parse(localStorage.getItem("settings"))||{ columns: 10, rows: 10, mines: 10 };
 let longerSide;
 let fontSize;
 let boxSize;
@@ -299,6 +300,7 @@ function reset() {
       break;
   }
 
+
     gridItemList = [];
     availableForMine = [];
 
@@ -317,6 +319,8 @@ function reset() {
     document.getElementById("rows-selector-value").innerText = settings.rows;
     document.getElementById("mines-selector-value").innerText = settings.mines;
     document.getElementById("cols-selector-value").innerText = settings.columns;
+    document.getElementById("cols-selector").value=settings.columns;
+    document.getElementById("rows-selector").value=settings.rows;
 
     minesRangeSelector.max = Math.floor(
         settings.columns * settings.rows * .9
@@ -359,6 +363,8 @@ function updateMines(e) {
     reset();
 }
 
+
+// event listeners
 document.addEventListener("mousedown", (e) => {
   // left click
   if (e.button === 0) {
@@ -390,6 +396,11 @@ document.getElementById("rows-selector").addEventListener("input", updateRows);
 document
     .getElementById("mines-selector")
     .addEventListener("input", updateMines);
+
+// save all settings before closing window
+window.onbeforeunload = function(){
+   localStorage.setItem("settings",JSON.stringify(settings))
+}
 
 // game setup
 reset();
