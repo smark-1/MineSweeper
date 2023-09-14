@@ -45,6 +45,9 @@ function click(e) {
         } else if (rightButtonDown) {
             rightClick(e);
         }
+        document.getElementById("mineCounter").innerText = `Mines: ${
+            mineCount - flagCount
+        }`;
     }, 20);
 }
 
@@ -63,12 +66,11 @@ function leftClick(e) {
 
     // only creates mines after left click has occurred so location is known to avoid mines
     if (turnCount === 1) {
-        let notAvailableForMine = [cellLocation , ...getAdjacentCells(cellLocation).map((cell)=>{return parseInt(cell.dataset.cellLocation)})];
-        console.log(notAvailableForMine);
+        let notAvailableForMine = [cellLocation , ...getAdjacentCells(cellLocation).map((cell)=>{
+            return parseInt(cell.dataset.cellLocation)})];
         availableForMine = [...Array(gridItemList.length).keys()].filter((num)=>{
             return !notAvailableForMine.includes(num);
         });
-        console.log(availableForMine);
         createMines(mineCount);
     }
 
@@ -132,7 +134,6 @@ function bothClick(e) {
     ) {
         turnCount++;
         let adjacentCells = getAdjacentCells(cellLocation);
-        console.log(adjacentCells);
         adjacentCells.forEach((cell) => leftClick({ target: cell }));
     }
 }
@@ -145,8 +146,10 @@ function getBlankCells(cellLocation) {
     used.push(cellLocation);
 
     let numOfMines = getAdjacentClass(cellLocation, "mine");
-
-    gridItemList[cellLocation].classList.remove("flag");
+    if (gridItemList[cellLocation].classList.contains("flag")){
+        gridItemList[cellLocation].classList.remove("flag");
+        flagCount--;
+    }
     if (numOfMines !== 0) {
         gridItemList[cellLocation].dataset.mineCount = numOfMines;
         gridItemList[cellLocation].classList.add("clicked");
