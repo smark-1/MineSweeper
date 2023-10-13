@@ -51,7 +51,7 @@ function click(e) {
     }, 20);
 }
 
-function leftClick(e) {
+function leftClick(e)   {
     if (e.target.classList.contains("flag")) {
         return;
     }
